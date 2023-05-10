@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\Contact;
 use App\Repository\ContactRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -14,14 +13,14 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ContactController extends AbstractController
 {
-    private $entityManager;
+    private EntityManagerInterface $entityManager;
 
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
     }
 
-    #[Route('/contactuser', name: 'contact_user', methods:'POST')]
+    #[Route('/contactUser', name: 'contact_user', methods:'POST')]
     public function contact(Request $request): JsonResponse
     {
         // Get the data from the request body
