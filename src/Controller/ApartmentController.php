@@ -186,7 +186,7 @@ class ApartmentController extends AbstractController
         $apartment->setDescription($data['description']);
         $apartment->setPrice($data['price']);
         $apartment->setBedrooms($data['bedrooms']);
-
+        $apartment->setImages($data['images']);
         $apartment->setAvailableFrom(DateTime::createFromFormat('Y-m-d', $data['availableFrom']));
 
         $apartment->setAvailableTo(DateTime::createFromFormat('Y-m-d', $data['availableTo']));
