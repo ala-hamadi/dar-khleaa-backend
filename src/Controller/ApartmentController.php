@@ -117,6 +117,22 @@ class ApartmentController extends AbstractController
         return $this->json($apartment);
     }
 
+    #[Route('/uploadI', name: 'upload', methods: 'POST')]
+    public function uploadImages(Request $request): array
+    {
+        $uploadedFiles = $request->files->all();
+        $imageFiles = [];
+        foreach ($uploadedFiles as $key => $file) {
+            $imageFiles[$key] = $file->getClientOriginalName();
+
+            $file->move(
+                $this->getParameter('images_directory'),
+                $file->getClientOriginalName()
+            );
+        }
+
+        return $imageFiles;
+    }
 
     #[Route('/AddApartment/{idUser}', name: 'add_apartment', methods: 'POST')]
     public function createAp(Request $request, $idUser, UserRepository $userRepository): JsonResponse
@@ -124,6 +140,10 @@ class ApartmentController extends AbstractController
         $data = json_decode($request->getContent(), true);
         $user = $userRepository->findOneBy(['id' => $idUser]);
         $apartment = new Apartment();
+
+
+        $apartment->setImages($data['images']);
+
 
         $apartment->setCity($data['city']);
         $apartment->setState($data['state']);

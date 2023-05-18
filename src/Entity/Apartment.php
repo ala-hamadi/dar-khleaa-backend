@@ -67,6 +67,9 @@ class Apartment
     #[ORM\OneToMany(mappedBy: 'apartment', targetEntity: Comment::class)]
     private Collection $comments;
 
+    #[ORM\Column(type: Types::ARRAY)]
+    private array $images = [];
+
     public function __construct()
     {
         $this->reservations = new ArrayCollection();
@@ -302,6 +305,18 @@ class Apartment
                 $comment->setApartment(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getImages(): array
+    {
+        return $this->images;
+    }
+
+    public function setImages(array $images): self
+    {
+        $this->images = $images;
 
         return $this;
     }
