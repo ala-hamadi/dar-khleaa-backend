@@ -42,7 +42,8 @@ class Apartment
     #[ORM\Column]
     private ?int $bedrooms = null;
 
-
+    #[ORM\Column(type: Types::ARRAY)]   
+    private array $images = [];
 
     #[ORM\ManyToOne(inversedBy: 'apartments')]
     private ?User $user = null;
@@ -66,6 +67,16 @@ class Apartment
 
     #[ORM\OneToMany(mappedBy: 'apartment', targetEntity: Comment::class)]
     private Collection $comments;
+
+    #[ORM\Column(length: 255)]
+    private ?string $title = null;
+
+ #[ORM\Column(length: 255)]
+    private ?string $video = null;
+
+    
+    #[ORM\Column]
+    private ?int $space = null;
 
     public function __construct()
     {
@@ -142,7 +153,29 @@ class Apartment
     {
         return $this->description;
     }
+ public function getImages(): array
+    {
+        return $this->images;
+    }
 
+    public function setImages(array $images): self
+    {
+        $this->images = $images;
+
+        return $this;
+    }
+
+     public function getVideo(): string
+    {
+        return $this->video;
+    }
+
+    public function setVideo(string $video): self
+    {
+        $this->video = $video;
+
+        return $this;
+    }
     public function setDescription(string $description): self
     {
         $this->description = $description;
@@ -302,6 +335,30 @@ class Apartment
                 $comment->setApartment(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(string $title): self
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    public function getSpace(): ?int
+    {
+        return $this->space;
+    }
+
+    public function setSpace(int $space): self
+    {
+        $this->space = $space;
 
         return $this;
     }

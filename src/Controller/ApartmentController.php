@@ -137,6 +137,11 @@ class ApartmentController extends AbstractController
         $apartment->setZipcode($data['zipcode']);
         $apartment->setAvailableFrom(DateTime::createFromFormat('Y-m-d', $data['availableFrom']));
         $currentDate = DateTime::createFromFormat('Y-m-d', date('Y-m-d'));
+        $apartment->setTitle($data['title']);
+        $apartment->setSpace($data['space']);
+        $apartment->setImages($data['images']);
+        $apartment->setVideo("video.mp4");
+
 
 //        $currentDate = new DateTime();
         $apartment->setCreatedAt($currentDate);
@@ -166,6 +171,9 @@ class ApartmentController extends AbstractController
         $apartment->setDescription($data['description']);
         $apartment->setPrice($data['price']);
         $apartment->setBedrooms($data['bedrooms']);
+        $apartment->setTitle($data['title']);
+        $apartment->setSpace($data['space']);
+        $apartment->setImages($data['images']);
 
         $apartment->setAvailableFrom(DateTime::createFromFormat('Y-m-d', $data['availableFrom']));
 
@@ -200,6 +208,44 @@ class ApartmentController extends AbstractController
         $this->manager->persist($apartment);
         $this->manager->flush();
         return $this->json($apartment);
+    }
+
+
+     #[Route('/admin/apartment', name: 'app_apartment_admin', methods: 'GET')]
+    public function adminsortApByDate(ApartmentRepository $apartmentRepository): JsonResponse
+    {
+        $query = $apartmentRepository->createQueryBuilder('a')
+            ->orderBy('a.createdAt', 'DESC')
+            ->getQuery();
+
+        $apartments = $query->getResult();
+        return $this->json($apartments);
+    }
+       #[Route('/uploadI', name: 'upload', methods: 'POST')]
+    public function uploadImages(Request $request): Response
+    {
+        $uploadedFiles = $request->files->all();
+        $imageFiles = [];
+        foreach ($uploadedFiles as $key => $file) {
+            $imageFiles[$key] = $file->getClientOriginalName();
+
+            $file->move(
+                $this->getParameter('images_directory'),
+                $file->getClientOriginalName()
+            );
+        }
+
+        return $this->json($imageFiles);
+    }
+    #[Route('/uploads/{filename}', name: 'get_image')]
+    public function getImage(string $filename): Response
+    {
+        $imagePath = $this->getParameter('images_directory').'/'.$filename;
+        
+        $response = new Response();
+        $response->setContent(file_get_contents($imagePath));
+        
+        return $response;
     }
 
 }

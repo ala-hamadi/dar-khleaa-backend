@@ -12,6 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use DateTime;
 
 class CommentController extends AbstractController
 {
@@ -24,11 +25,15 @@ class CommentController extends AbstractController
 
     }
 
-    #[Route('/comment', name: 'app_comment', methods: 'GET')]
-    public function indexC(CommentRepository $commentRepository): JsonResponse
+    #[Route('/comment/{idAp}', name: 'app_comment', methods: 'GET')]
+    public function indexC($idAp,CommentRepository $commentRepository, ApartmentRepository $apartmentRepository): JsonResponse
     {
+                $apartment = $apartmentRepository->findOneBy(['id' => $idAp]);
+
         $query = $commentRepository->createQueryBuilder('c')
+            ->where('c.apartment = :apartment')
             ->orderBy('c.createdAt', 'DESC')
+            ->setParameter('apartment', $apartment)
             ->getQuery();
 
         $cs = $query->getResult();
@@ -46,6 +51,9 @@ class CommentController extends AbstractController
         $comment->setApartment($apartment);
         $comment->setContent($data['content']);
         $comment->setRating(0);
+                $currentDate = DateTime::createFromFormat('Y-m-d', date('Y-m-d'));
+
+        $comment->setCreatedAt($currentDate);
 
 
         $this->manager->persist($comment);
